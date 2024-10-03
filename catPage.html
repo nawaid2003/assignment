@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cat Images Explosion</title>
+    <style>
+      body {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f0f0;
+      }
+      img {
+        width: 200px;
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // Function to fetch and display random cat images
+      function loadCatImages() {
+        for (let i = 0; i < 10; i++) {
+          fetch("https://api.thecatapi.com/v1/images/search", {
+            headers: {
+              "x-api-key":
+                "live_r1g8aZSrmqXEefKZ5CQ1uqa80xP5MD3neXQmJjsjO0PtGgl59IkPrUcdK2fbNJVV", // Your API key
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const img = document.createElement("img");
+              img.src = data[0].url;
+              document.body.appendChild(img);
+            })
+            .catch((error) =>
+              console.error("Error fetching cat image:", error)
+            );
+        }
+      }
+
+      // Load cat images on page load
+      window.onload = loadCatImages;
+    </script>
+  </body>
+</html>
