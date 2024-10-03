@@ -304,12 +304,70 @@
         storageBucket: "ws-tae-bc4c9.appspot.com",
         messagingSenderId: "851819122361",
         appId: "1:851819122361:web:43cd59d37d990dcba25568",
-        measurementId: "G-EW51YJ29XD",
+        measurementId: "G-EW51YJHC71",
       };
 
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
+
+      // Password validation function
+      function validatePassword(password) {
+        const passwordRequirements =
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        if (!passwordRequirements.test(password)) {
+          return "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
+        }
+        return "";
+      }
+
+      // Sign up form submission handler
+      document.getElementById("signupForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("signupName").value;
+        const email = document.getElementById("signupEmail").value;
+        const password = document.getElementById("signupPassword").value;
+        const errorElement = document.getElementById("signupError");
+
+        // Validate password
+        const passwordError = validatePassword(password);
+        if (passwordError) {
+          errorElement.textContent = passwordError;
+          return;
+        }
+
+        // If validation passes, continue with Firebase sign-up
+        createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log("User signed up successfully:", user);
+            errorElement.textContent = "Signup successful!";
+          })
+          .catch((error) => {
+            console.error("Signup error:", error);
+            errorElement.textContent = error.message;
+          });
+      });
+
+      // Sign in form submission handler
+      document.getElementById("signinForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("signinEmail").value;
+        const password = document.getElementById("signinPassword").value;
+        const errorElement = document.getElementById("signinError");
+
+        signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log("User signed in successfully:", user);
+            errorElement.textContent = "Signin successful!";
+          })
+          .catch((error) => {
+            console.error("Signin error:", error);
+            errorElement.textContent = error.message;
+          });
+      });
 
       const signUpButton = document.getElementById("signUp");
       const signInButton = document.getElementById("signIn");
@@ -321,78 +379,6 @@
 
       signInButton.addEventListener("click", () => {
         container.classList.remove("right-panel-active");
-      });
-
-      // Sign Up form submission
-      document.getElementById("signupForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const name = document.getElementById("signupName").value;
-        const email = document.getElementById("signupEmail").value;
-        const password = document.getElementById("signupPassword").value;
-        const errorElement = document.getElementById("signupError");
-
-        signInWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            const user = userCredential.user;
-            console.log("User signed in successfully:", user);
-            errorElement.textContent = "Signin successful!";
-
-            // Redirect to the cat page
-            explodeWithCatPics();
-          })
-          .catch((error) => {
-            console.error("Signin error:", error);
-            errorElement.textContent = error.message;
-          });
-
-        function explodeWithCatPics() {
-          document.body.innerHTML = ""; // Clear the current page
-
-          // Fetch and display cat pictures
-          for (let i = 0; i < 10; i++) {
-            fetch("https://api.thecatapi.com/v1/images/search", {
-              headers: {
-                "x-api-key":
-                  "live_r1g8aZSrmqXEefKZ5CQ1uqa80xP5MD3neXQmJjsjO0PtGgl59IkPrUcdK2fbNJVV", // Your API key
-              },
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                const img = document.createElement("img");
-                img.src = data[0].url;
-                img.style.width = "200px";
-                img.style.margin = "10px";
-                document.body.appendChild(img);
-              })
-              .catch((error) =>
-                console.error("Error fetching cat image:", error)
-              );
-          }
-        }
-      });
-
-      // Sign In form submission
-      // Sign In form submission
-      document.getElementById("signinForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const email = document.getElementById("signinEmail").value;
-        const password = document.getElementById("signinPassword").value;
-        const errorElement = document.getElementById("signinError");
-
-        signInWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            // Signed in successfully
-            const user = userCredential.user;
-            console.log("User signed in successfully:", user);
-            errorElement.textContent = "Signin successful!";
-
-            // Redirect to the cat page after successful sign-in
-            window.location.href = "catPage.html";
-          })
-          .catch((error) => {
-            console.error("Signin error:", error);
-            errorElement.textContent = error.message;
-          });
       });
     </script>
   </body>
