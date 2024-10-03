@@ -362,6 +362,7 @@
             const user = userCredential.user;
             console.log("User signed in successfully:", user);
             errorElement.textContent = "Signin successful!";
+            window.location.href = "catPage.html"; // Add this line to redirect
           })
           .catch((error) => {
             console.error("Signin error:", error);
